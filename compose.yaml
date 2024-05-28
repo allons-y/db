@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 --password="$$(cat /run/secrets/db-password)" --silent
+      interval: 1s
+      retries: 10
+    environment:
+      MYSQL_DATABASE: avatar
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db-password
+    secrets:
+      - db-password
+    volumes:
+      - db_data:/var/lib/mysql  
+    networks:
+      - private
+
+volumes:
+  db_data:
+
+secrets:
+  db-password:
+    file: ~/.DB_SECRET
+
+networks:
+  private:
+    internal: true
